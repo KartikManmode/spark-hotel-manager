@@ -116,7 +116,7 @@ const Rooms = () => {
                   <Input type="number" value={floor} onChange={(e) => setFloor(e.target.value)} min="1" required />
                 </div>
                 <div className="space-y-2">
-                  <Label>Rate/Night ($)</Label>
+                  <Label>Rate/Night (₹)</Label>
                   <Input type="number" value={rate} onChange={(e) => setRate(e.target.value)} min="0" step="0.01" required />
                 </div>
                 <div className="space-y-2">
@@ -143,7 +143,7 @@ const Rooms = () => {
               </span>
             </div>
             <div className="mt-3 flex items-center justify-between">
-              <span className="text-sm font-semibold">${Number(room.rate_per_night).toFixed(0)}/night</span>
+              <span className="text-sm font-semibold">₹{Number(room.rate_per_night).toFixed(0)}/night</span>
               <Button
                 size="sm"
                 variant="outline"

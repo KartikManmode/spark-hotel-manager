@@ -16,7 +16,6 @@ const Guests = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [nationality, setNationality] = useState("");
   const [idType, setIdType] = useState("");
   const [idNumber, setIdNumber] = useState("");
 
@@ -32,9 +31,8 @@ const Guests = () => {
     e.preventDefault();
     const { error } = await supabase.from("guests").insert({
       full_name: name.trim(),
-      email: email || null,
-      phone: phone || null,
-      nationality: nationality || null,
+      email: email.trim(),
+      phone: phone.trim(),
       id_type: idType || null,
       id_number: idNumber || null,
     });
@@ -43,7 +41,7 @@ const Guests = () => {
     } else {
       toast({ title: "Guest added" });
       setDialogOpen(false);
-      setName(""); setEmail(""); setPhone(""); setNationality(""); setIdType(""); setIdNumber("");
+      setName(""); setEmail(""); setPhone(""); setIdType(""); setIdNumber("");
       fetchGuests();
     }
   };
@@ -73,14 +71,13 @@ const Guests = () => {
             <form onSubmit={handleCreate} className="space-y-4">
               <div className="space-y-2"><Label>Full Name *</Label><Input value={name} onChange={(e) => setName(e.target.value)} required /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
-                <div className="space-y-2"><Label>Phone</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} /></div>
+                <div className="space-y-2"><Label>Email *</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
+                <div className="space-y-2"><Label>Phone *</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} required /></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>Nationality</Label><Input value={nationality} onChange={(e) => setNationality(e.target.value)} /></div>
                 <div className="space-y-2"><Label>ID Type</Label><Input value={idType} onChange={(e) => setIdType(e.target.value)} placeholder="Passport, DL..." /></div>
+                <div className="space-y-2"><Label>ID Number</Label><Input value={idNumber} onChange={(e) => setIdNumber(e.target.value)} /></div>
               </div>
-              <div className="space-y-2"><Label>ID Number</Label><Input value={idNumber} onChange={(e) => setIdNumber(e.target.value)} /></div>
               <Button type="submit" className="w-full">Register Guest</Button>
             </form>
           </DialogContent>
@@ -108,7 +105,6 @@ const Guests = () => {
                   <th className="px-5 py-3 font-medium text-muted-foreground">Name</th>
                   <th className="px-5 py-3 font-medium text-muted-foreground">Email</th>
                   <th className="px-5 py-3 font-medium text-muted-foreground">Phone</th>
-                  <th className="px-5 py-3 font-medium text-muted-foreground">Nationality</th>
                   <th className="px-5 py-3 font-medium text-muted-foreground">Visits</th>
                   <th className="px-5 py-3 font-medium text-muted-foreground">Total Spent</th>
                 </tr>
@@ -119,9 +115,8 @@ const Guests = () => {
                     <td className="px-5 py-3 font-medium">{g.full_name}</td>
                     <td className="px-5 py-3 text-muted-foreground">{g.email || "—"}</td>
                     <td className="px-5 py-3 text-muted-foreground">{g.phone || "—"}</td>
-                    <td className="px-5 py-3">{g.nationality || "—"}</td>
                     <td className="px-5 py-3 font-mono">{g.total_visits}</td>
-                    <td className="px-5 py-3 font-mono">${Number(g.total_spent).toFixed(2)}</td>
+                    <td className="px-5 py-3 font-mono">₹{Number(g.total_spent).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>

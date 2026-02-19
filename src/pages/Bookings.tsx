@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Search } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
@@ -20,6 +21,10 @@ const Bookings = () => {
   const [availableRooms, setAvailableRooms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Confirmation dialogs
+  const [checkInConfirm, setCheckInConfirm] = useState<{ bookingId: string; roomId: string } | null>(null);
+  const [cancelConfirm, setCancelConfirm] = useState<string | null>(null);
 
   // Form state
   const [checkIn, setCheckIn] = useState("");
@@ -192,7 +197,7 @@ const Bookings = () => {
                     <SelectContent>
                       {availableRooms.map((room) => (
                         <SelectItem key={room.id} value={room.id}>
-                          {room.room_number} — {room.room_type} — ${Number(room.rate_per_night).toFixed(0)}/night
+                          {room.room_number} — {room.room_type} — ₹{Number(room.rate_per_night).toFixed(0)}/night
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -230,7 +235,7 @@ const Bookings = () => {
                   <p className="font-medium">Booking Summary</p>
                   <p className="text-muted-foreground">
                     {differenceInDays(new Date(checkOut), new Date(checkIn))} night(s) ·{" "}
-                    ${(Number(availableRooms.find((r) => r.id === selectedRoom)?.rate_per_night ?? 0) * differenceInDays(new Date(checkOut), new Date(checkIn))).toFixed(2)}
+                    ₹{(Number(availableRooms.find((r) => r.id === selectedRoom)?.rate_per_night ?? 0) * differenceInDays(new Date(checkOut), new Date(checkIn))).toFixed(2)}
                   </p>
                 </div>
               )}
@@ -268,12 +273,12 @@ const Bookings = () => {
                     <td className="px-5 py-3">
                       <StatusBadge status={b.status} />
                     </td>
-                    <td className="px-5 py-3 font-mono">${Number(b.total_amount).toFixed(2)}</td>
+                    <td className="px-5 py-3 font-mono">₹{Number(b.total_amount).toFixed(2)}</td>
                     <td className="px-5 py-3 space-x-2">
                       {b.status === "confirmed" && (
                         <>
-                          <Button size="sm" variant="outline" onClick={() => handleCheckIn(b.id, b.room_id)}>Check In</Button>
-                          <Button size="sm" variant="ghost" onClick={() => handleCancel(b.id)}>Cancel</Button>
+                          <Button size="sm" variant="outline" onClick={() => setCheckInConfirm({ bookingId: b.id, roomId: b.room_id })}>Check In</Button>
+                          <Button size="sm" variant="ghost" onClick={() => setCancelConfirm(b.id)}>Cancel</Button>
                         </>
                       )}
                     </td>
@@ -284,6 +289,44 @@ const Bookings = () => {
           </div>
         )}
       </div>
+
+      {/* Check-in confirmation */}
+      <AlertDialog open={!!checkInConfirm} onOpenChange={(open) => !open && setCheckInConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Check-In</AlertDialogTitle>
+            <AlertDialogDescription>Are you sure you want to check in this guest? The room status will be changed to occupied.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              if (checkInConfirm) {
+                handleCheckIn(checkInConfirm.bookingId, checkInConfirm.roomId);
+                setCheckInConfirm(null);
+              }
+            }}>Yes, Check In</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Cancel confirmation */}
+      <AlertDialog open={!!cancelConfirm} onOpenChange={(open) => !open && setCancelConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
+            <AlertDialogDescription>Are you sure you want to cancel this booking? This action cannot be undone.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => {
+              if (cancelConfirm) {
+                handleCancel(cancelConfirm);
+                setCancelConfirm(null);
+              }
+            }}>Yes, Cancel Booking</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
