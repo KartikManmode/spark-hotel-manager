@@ -89,7 +89,7 @@ const Checkout = () => {
     const totalCharges = charges.reduce((s, c) => s + Number(c.amount), 0) + Number(selectedBooking.total_amount);
     const totalPaid = payments.reduce((s, p) => s + Number(p.amount), 0);
     if (totalPaid < totalCharges) {
-      toast({ title: "Balance outstanding", description: `$${(totalCharges - totalPaid).toFixed(2)} remaining.`, variant: "destructive" });
+      toast({ title: "Balance outstanding", description: `₹${(totalCharges - totalPaid).toFixed(2)} remaining.`, variant: "destructive" });
       return;
     }
     await supabase.from("bookings").update({ status: "checked_out" }).eq("id", selectedBooking.id);
@@ -157,7 +157,7 @@ const Checkout = () => {
                       <form onSubmit={addCharge} className="space-y-4">
                         <div className="space-y-2"><Label>Description</Label><Input value={chargeDesc} onChange={(e) => setChargeDesc(e.target.value)} required /></div>
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2"><Label>Amount ($)</Label><Input type="number" value={chargeAmount} onChange={(e) => setChargeAmount(e.target.value)} min="0" step="0.01" required /></div>
+                          <div className="space-y-2"><Label>Amount (₹)</Label><Input type="number" value={chargeAmount} onChange={(e) => setChargeAmount(e.target.value)} min="0" step="0.01" required /></div>
                           <div className="space-y-2">
                             <Label>Category</Label>
                             <Select value={chargeCategory} onValueChange={setChargeCategory}>
@@ -181,12 +181,12 @@ const Checkout = () => {
                 <div className="rounded-lg border divide-y text-sm">
                   <div className="flex justify-between px-4 py-2 bg-muted/30">
                     <span>Room charge</span>
-                    <span className="font-mono">${Number(selectedBooking.total_amount).toFixed(2)}</span>
+                    <span className="font-mono">₹{Number(selectedBooking.total_amount).toFixed(2)}</span>
                   </div>
                   {charges.map((c) => (
                     <div key={c.id} className="flex justify-between px-4 py-2">
                       <span>{c.description} <span className="text-xs text-muted-foreground">({c.category})</span></span>
-                      <span className="font-mono">${Number(c.amount).toFixed(2)}</span>
+                      <span className="font-mono">₹{Number(c.amount).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
@@ -201,7 +201,7 @@ const Checkout = () => {
                     <DialogContent>
                       <DialogHeader><DialogTitle>Record Payment</DialogTitle></DialogHeader>
                       <form onSubmit={addPayment} className="space-y-4">
-                        <div className="space-y-2"><Label>Amount ($)</Label><Input type="number" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} min="0" step="0.01" required /></div>
+                        <div className="space-y-2"><Label>Amount (₹)</Label><Input type="number" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} min="0" step="0.01" required /></div>
                         <div className="space-y-2">
                           <Label>Method</Label>
                           <Select value={payMethod} onValueChange={setPayMethod}>
@@ -227,7 +227,7 @@ const Checkout = () => {
                     payments.map((p) => (
                       <div key={p.id} className="flex justify-between px-4 py-2">
                         <span className="capitalize">{p.method.replace("_", " ")}</span>
-                        <span className="font-mono text-success">-${Number(p.amount).toFixed(2)}</span>
+                        <span className="font-mono text-success">-₹{Number(p.amount).toFixed(2)}</span>
                       </div>
                     ))
                   )}
@@ -236,11 +236,11 @@ const Checkout = () => {
 
               {/* Summary */}
               <div className="rounded-lg bg-muted p-4 space-y-1">
-                <div className="flex justify-between text-sm"><span>Total Charges</span><span className="font-mono font-semibold">${totalCharges.toFixed(2)}</span></div>
-                <div className="flex justify-between text-sm"><span>Total Paid</span><span className="font-mono text-success">${totalPaid.toFixed(2)}</span></div>
+                <div className="flex justify-between text-sm"><span>Total Charges</span><span className="font-mono font-semibold">₹{totalCharges.toFixed(2)}</span></div>
+                <div className="flex justify-between text-sm"><span>Total Paid</span><span className="font-mono text-success">₹{totalPaid.toFixed(2)}</span></div>
                 <div className="flex justify-between text-sm font-bold border-t pt-1">
                   <span>Balance</span>
-                  <span className={`font-mono ${balance > 0 ? "text-destructive" : "text-success"}`}>${balance.toFixed(2)}</span>
+                  <span className={`font-mono ${balance > 0 ? "text-destructive" : "text-success"}`}>₹{balance.toFixed(2)}</span>
                 </div>
               </div>
 
