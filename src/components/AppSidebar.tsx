@@ -10,6 +10,7 @@ import {
   LogOut,
   Hotel,
   Receipt,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,7 @@ const navItems = [
   { to: "/rooms", icon: BedDouble, label: "Rooms" },
   { to: "/guests", icon: Users, label: "Guests" },
   { to: "/checkout", icon: Receipt, label: "Checkout" },
+  { to: "/invoices", icon: FileText, label: "Invoices" },
   { to: "/inventory", icon: Package, label: "Inventory" },
 ];
 

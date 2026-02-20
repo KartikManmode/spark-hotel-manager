@@ -193,6 +193,122 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_counter: {
+        Row: {
+          current_number: number
+          id: number
+          year: number
+        }
+        Insert: {
+          current_number?: number
+          id?: number
+          year?: number
+        }
+        Update: {
+          current_number?: number
+          id?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      invoice_items: {
+        Row: {
+          amount: number
+          booking_id: string
+          description: string
+          id: string
+          invoice_id: string
+          room_number: string
+        }
+        Insert: {
+          amount?: number
+          booking_id: string
+          description: string
+          id?: string
+          invoice_id: string
+          room_number: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          room_number?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          base_amount: number
+          cgst_amount: number
+          created_at: string
+          email_sent: boolean
+          guest_id: string
+          id: string
+          invoice_number: string
+          payment_mode: string
+          pdf_url: string | null
+          recipient_company_name: string | null
+          recipient_gstin: string | null
+          sgst_amount: number
+          total_amount: number
+        }
+        Insert: {
+          base_amount?: number
+          cgst_amount?: number
+          created_at?: string
+          email_sent?: boolean
+          guest_id: string
+          id?: string
+          invoice_number: string
+          payment_mode?: string
+          pdf_url?: string | null
+          recipient_company_name?: string | null
+          recipient_gstin?: string | null
+          sgst_amount?: number
+          total_amount?: number
+        }
+        Update: {
+          base_amount?: number
+          cgst_amount?: number
+          created_at?: string
+          email_sent?: boolean
+          guest_id?: string
+          id?: string
+          invoice_number?: string
+          payment_mode?: string
+          pdf_url?: string | null
+          recipient_company_name?: string | null
+          recipient_gstin?: string | null
+          sgst_amount?: number
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "guests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -352,6 +468,15 @@ export type Database = {
           p_room_id: string
         }
         Returns: boolean
+      }
+      finalize_checkout: {
+        Args: {
+          p_booking_ids: string[]
+          p_company_name?: string
+          p_payment_mode?: string
+          p_recipient_gstin?: string
+        }
+        Returns: Json
       }
       get_available_rooms: {
         Args: { p_check_in: string; p_check_out: string }
