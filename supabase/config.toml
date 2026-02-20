@@ -1,1 +1,4 @@
 project_id = "hbndgsxqznfxppirkkty"
+
+[functions.checkout-invoice]
+verify_jwt = false
